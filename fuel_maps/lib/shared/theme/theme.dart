@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final ThemeData appLightTheme = FlexThemeData.light(
   colors: const FlexSchemeColor(
@@ -44,8 +45,7 @@ final ThemeData appLightTheme = FlexThemeData.light(
   tones: FlexTones.highContrast(Brightness.light),
   visualDensity: FlexColorScheme.comfortablePlatformDensity,
   useMaterial3: true,
-  // To use the playground font, add GoogleFonts package and uncomment
-  // fontFamily: GoogleFonts.notoSans().fontFamily,
+  fontFamily: GoogleFonts.notoSans().fontFamily,
 );
 
 final ThemeData appDarkTheme = FlexThemeData.dark(
@@ -81,13 +81,15 @@ final ThemeData appDarkTheme = FlexThemeData.dark(
   keyColors: const FlexKeyColors(
     useSecondary: true,
     useTertiary: true,
+    keepPrimary: true,
+    keepSecondary: true,
+    keepTertiary: true,
+    keepPrimaryContainer: true,
+    keepSecondaryContainer: true,
+    keepTertiaryContainer: true,
   ),
   tones: FlexTones.highContrast(Brightness.dark),
   visualDensity: FlexColorScheme.comfortablePlatformDensity,
   useMaterial3: true,
-  // To use the playground font, add GoogleFonts package and uncomment
-  // fontFamily: GoogleFonts.notoSans().fontFamily,
+  fontFamily: GoogleFonts.notoSans().fontFamily,
 );
-// If you do not have a themeMode switch, uncomment this line
-// to let the device system mode control the theme mode:
-// themeMode: ThemeMode.system,
