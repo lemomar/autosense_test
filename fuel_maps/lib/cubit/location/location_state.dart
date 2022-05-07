@@ -1,7 +1,7 @@
 part of 'location_cubit.dart';
 
 abstract class LocationState extends Equatable {
-  const LocationState({this.locationFetchFailed = true, this.latLng});
+  const LocationState({this.locationFetchFailed = false, this.latLng});
   final LatLng? latLng;
   final bool locationFetchFailed;
 
