@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 import 'models/settings/settings.dart';
@@ -10,6 +11,9 @@ import 'pages/pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+  }
   if (!kIsWeb) {
     final appDocumentDir = await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDir.path);
@@ -71,27 +75,23 @@ class MyHomePage extends HookWidget {
         colorScheme: colorScheme,
         bottomBarState: bottomBarState,
       ),
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: IndexedStack(
-          children: [
-            CounterAndSwitch(
-              counter: counter,
-              settings: settings,
-              navigatorKey: mapGlobalKey,
-            ),
-            CounterOnly(
-              counter: counter,
-              navigatorKey: favoriteGlobalKey,
-            ),
-            SwitchOnly(
-              settings: settings,
-              navigatorKey: profileGlobalKey,
-            ),
-          ],
-          index: bottomBarState.value,
+      body: SafeArea(
+        top: true,
+        child: Center(
+          child: IndexedStack(
+            children: [
+              const MapScreen(),
+              CounterOnly(
+                counter: counter,
+                navigatorKey: favoriteGlobalKey,
+              ),
+              SwitchOnly(
+                settings: settings,
+                navigatorKey: profileGlobalKey,
+              ),
+            ],
+            index: bottomBarState.value,
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -132,7 +132,7 @@ class CounterOnly extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const MapScreen(),
+                  builder: (context) => const Profile(),
                 ),
               ),
               child: const Text("Navigate"),
@@ -173,7 +173,7 @@ class SwitchOnly extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const MapScreen(),
+                  builder: (context) => const Profile(),
                 ),
               ),
               child: const Text("Navigate"),
@@ -219,7 +219,7 @@ class CounterAndSwitch extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const MapScreen(),
+                  builder: (context) => const Profile(),
                 ),
               ),
               child: const Text("Navigate"),
@@ -245,8 +245,8 @@ class CustomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color bottomBarBackgroundColor = isDark ? colorScheme.secondary : colorScheme.primary;
-    final Color bottomBarSelectedColor = isDark ? colorScheme.onSecondary : colorScheme.onPrimary;
+    final Color bottomBarBackgroundColor = colorScheme.primary;
+    final Color bottomBarSelectedColor = colorScheme.onPrimary;
     return Container(
       decoration: BoxDecoration(
         color: bottomBarBackgroundColor,
