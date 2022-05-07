@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "486846432381",
+    "project_id": "auto-sense-test",
+    "storage_bucket": "auto-sense-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486846432381:android:0b6a544d8068ebf9d25d14",
+        "android_client_info": {
+          "package_name": "me.momar.fuel_maps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486846432381-e5r5plduil14qts6nhavd5fbia5k2ag7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwTSDYnoOpJXh2UMmACf0w45kHpb6IhQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486846432381-e5r5plduil14qts6nhavd5fbia5k2ag7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "486846432381-itkkpjo7vbj001gnfvnb55ao0ei2onb4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "me.momar.fuelMaps"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
