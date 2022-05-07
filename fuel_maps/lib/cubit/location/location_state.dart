@@ -1,23 +1,23 @@
 part of 'location_cubit.dart';
 
 abstract class LocationState extends Equatable {
-  LocationState({this.locationFetchFailed = true, this.latLng});
+  const LocationState({this.locationFetchFailed = true, this.latLng});
   final LatLng? latLng;
-  bool locationFetchFailed;
+  final bool locationFetchFailed;
 
   @override
   List<Object> get props => [];
 }
 
 class LocationInitial extends LocationState {
-  LocationInitial() : super();
+  const LocationInitial() : super();
 }
 
 class LocationFetched extends LocationState {
-  LocationFetched({required this.newLatLng}) : super(latLng: newLatLng);
+  const LocationFetched({required this.newLatLng}) : super(latLng: newLatLng);
   final LatLng newLatLng;
 }
 
 class LocationError extends LocationState {
-  LocationError() : super(locationFetchFailed: true, latLng: null);
+  const LocationError() : super(locationFetchFailed: true, latLng: null);
 }

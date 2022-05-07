@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 part 'location_state.dart';
 
 class LocationCubit extends Cubit<LocationState> {
-  LocationCubit() : super(LocationInitial());
+  LocationCubit() : super(const LocationInitial());
 
   void updateLocation() async {
     try {
@@ -18,7 +18,7 @@ class LocationCubit extends Cubit<LocationState> {
           .then((value) => LatLng(value.latitude, value.longitude));
       emit(LocationFetched(newLatLng: newLatLng));
     } catch (e) {
-      emit(LocationError());
+      emit(const LocationError());
     }
   }
 }
