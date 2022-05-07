@@ -26,7 +26,7 @@ class Station {
   Map<String, dynamic> toJson() => _$StationToJson(this);
 }
 
-final sampleStationList = [
+final List<Station> sampleStationList = [
   {
     "id": "MIGROL_100041",
     "name": "Migrol Tankstelle",
@@ -53,4 +53,4 @@ final sampleStationList = [
       {"id": 10003, "fuel_type": "DIESEL", "price": 1.71, "available": false}
     ]
   }
-];
+].map(Station.fromJson).toList();

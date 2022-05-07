@@ -11,7 +11,7 @@ class Pump {
     required this.available,
   });
 
-  final String id;
+  final int id;
   @JsonKey(name: "fuel_type")
   final String fuelType;
   final double price;

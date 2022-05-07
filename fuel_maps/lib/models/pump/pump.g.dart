@@ -7,7 +7,7 @@ part of 'pump.dart';
 // **************************************************************************
 
 Pump _$PumpFromJson(Map<String, dynamic> json) => Pump(
-      id: json['id'] as String,
+      id: json['id'] as int,
       fuelType: json['fuel_type'] as String,
       price: (json['price'] as num).toDouble(),
       available: json['available'] as bool,
