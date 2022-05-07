@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fuel_maps/cubit/location/location_cubit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -37,9 +39,12 @@ class FuelMaps extends StatelessWidget {
           theme: settings.lightTheme,
           darkTheme: settings.darkTheme,
           themeMode: settings.getThemeMode(),
-          home: MyHomePage(
-            title: "Fuel Maps",
-            settings: settings,
+          home: BlocProvider(
+            create: (context) => LocationCubit(),
+            child: MyHomePage(
+              title: "Fuel Maps",
+              settings: settings,
+            ),
           ),
         );
       },
@@ -95,7 +100,10 @@ class MyHomePage extends HookWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => counter.value++,
+        onPressed: () {
+          counter.value++;
+          context.read<LocationCubit>().updateLocation();
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
