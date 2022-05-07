@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -68,6 +70,7 @@ class MyHomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ValueNotifier<Completer<GoogleMapController>> mapController = useState(Completer());
     final counter = useState(0);
     final bottomBarState = useState(0);
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -85,7 +88,7 @@ class MyHomePage extends HookWidget {
         child: Center(
           child: IndexedStack(
             children: [
-              const MapScreen(),
+              MapScreen(controller: mapController),
               CounterOnly(
                 counter: counter,
                 navigatorKey: favoriteGlobalKey,
@@ -100,12 +103,21 @@ class MyHomePage extends HookWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           counter.value++;
           context.read<LocationCubit>().updateLocation();
+          if (mapController.value.isCompleted) {
+            final controller = await mapController.value.future;
+            final mapState = context.read<LocationCubit>().state;
+            controller.moveCamera(
+              CameraUpdate.newLatLng(
+                mapState.latLng!,
+              ),
+            );
+          }
         },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        tooltip: 'Locate',
+        child: const Icon(Icons.location_pin),
       ),
     );
   }
