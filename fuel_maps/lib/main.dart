@@ -80,15 +80,15 @@ class MyHomePage extends HookWidget {
             CounterAndSwitch(
               counter: counter,
               settings: settings,
-              key: mapGlobalKey,
+              navigatorKey: mapGlobalKey,
             ),
             CounterOnly(
               counter: counter,
-              key: favoriteGlobalKey,
+              navigatorKey: favoriteGlobalKey,
             ),
             SwitchOnly(
               settings: settings,
-              key: profileGlobalKey,
+              navigatorKey: profileGlobalKey,
             ),
           ],
           index: bottomBarState.value,
@@ -107,14 +107,17 @@ class CounterOnly extends StatelessWidget {
   const CounterOnly({
     Key? key,
     required this.counter,
+    required this.navigatorKey,
   }) : super(key: key);
 
   final ValueNotifier<int> counter;
 
+  final GlobalKey navigatorKey;
+
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: key,
+      key: navigatorKey,
       onGenerateRoute: (context) => MaterialPageRoute(
         builder: (context) => Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -145,14 +148,17 @@ class SwitchOnly extends StatelessWidget {
   const SwitchOnly({
     Key? key,
     required this.settings,
+    required this.navigatorKey,
   }) : super(key: key);
 
   final Settings settings;
 
+  final GlobalKey navigatorKey;
+
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: key,
+      key: navigatorKey,
       onGenerateRoute: (context) => MaterialPageRoute(
         builder: (context) => Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -184,15 +190,17 @@ class CounterAndSwitch extends StatelessWidget {
     Key? key,
     required this.counter,
     required this.settings,
+    required this.navigatorKey,
   }) : super(key: key);
 
   final ValueNotifier<int> counter;
   final Settings settings;
+  final GlobalKey navigatorKey;
 
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: key,
+      key: navigatorKey,
       onGenerateRoute: (context) => MaterialPageRoute(
         builder: (context) => Column(
           mainAxisAlignment: MainAxisAlignment.center,
