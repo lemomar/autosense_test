@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fuel_maps/cubit/location/location_cubit.dart';
+import 'package:fuel_maps/models/station/station.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../../cubits/cubits.dart';
 
 class MapScreen extends HookWidget {
   const MapScreen({Key? key, required this.controller}) : super(key: key);
@@ -31,6 +33,7 @@ class MapScreen extends HookWidget {
             onMapCreated: ((c) => controller.value.complete(c)),
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
+            markers: sampleStationList.map((station) => station.toMarker()).toSet(),
             initialCameraPosition: CameraPosition(
               zoom: 8,
               target: location.latLng!,

@@ -1,20 +1,27 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fuel_maps/cubit/location/location_cubit.dart';
+import 'package:fuel_maps/blocs/app/app_bloc.dart';
+import 'package:fuel_maps/firebase_options.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
+import 'cubits/cubits.dart';
 import 'models/settings/settings.dart';
 import 'pages/pages.dart';
+import 'repositories/repositories.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   if (defaultTargetPlatform == TargetPlatform.android) {
     AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
   }
@@ -24,32 +31,42 @@ void main() async {
   }
   Hive.registerAdapter(SettingsAdapter());
   await Hive.openBox<Settings>("settings");
-  runApp(const FuelMaps());
+  final AuthRepository authRepository = AuthRepository();
+  runApp(FuelMaps(authRepository: authRepository));
 }
 
 class FuelMaps extends StatelessWidget {
-  const FuelMaps({Key? key}) : super(key: key);
+  const FuelMaps({Key? key, authRepository})
+      : _authRepository = authRepository,
+        super(key: key);
+
+  final AuthRepository _authRepository;
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: Hive.box<Settings>("settings").listenable(),
-      builder: (context, Box<Settings> box, child) {
-        final Settings settings = box.get("settings") ?? Settings();
-        return MaterialApp(
-          title: 'Fuel Maps',
-          theme: settings.lightTheme,
-          darkTheme: settings.darkTheme,
-          themeMode: settings.getThemeMode(),
-          home: BlocProvider(
-            create: (context) => LocationCubit(),
-            child: MyHomePage(
-              title: "Fuel Maps",
-              settings: settings,
-            ),
-          ),
-        );
-      },
+    return RepositoryProvider.value(
+      value: _authRepository,
+      child: BlocProvider(
+          create: (_) => AppBloc(authRepository: _authRepository),
+          child: ValueListenableBuilder(
+            valueListenable: Hive.box<Settings>("settings").listenable(),
+            builder: (context, Box<Settings> box, child) {
+              final Settings settings = box.get("settings") ?? Settings();
+              return MaterialApp(
+                title: 'Fuel Maps',
+                theme: settings.lightTheme,
+                darkTheme: settings.darkTheme,
+                themeMode: settings.getThemeMode(),
+                home: BlocProvider(
+                  create: (context) => LocationCubit(),
+                  child: MyHomePage(
+                    title: "Fuel Maps",
+                    settings: settings,
+                  ),
+                ),
+              );
+            },
+          )),
     );
   }
 }
