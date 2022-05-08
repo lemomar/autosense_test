@@ -13,12 +13,13 @@ class StationsCubit extends Cubit<StationsState> {
 
   void fetchStations() async {
     try {
-      final Response response = await Dio().get("http://localhost:3000/");
+      final Response response = await Dio().get("http://100.104.208.24:3000/");
       if (response.statusCode != 200) throw Exception();
       final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(response.data["stations"]);
       final List<Station> stations = data.map(Station.fromJson).toList();
       emit(StationsLoaded(stations));
-    } catch (_) {
+    } catch (e) {
+      print(e);
       emit(const StationsError());
     }
   }

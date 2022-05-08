@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fuel_maps/pages/map/station_modal.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../cubits/cubits.dart';
@@ -30,7 +31,16 @@ class MapScreen extends HookWidget {
 
     Set<Marker> markers = <Marker>{};
     if (stationsState.stations != null) {
-      markers.addAll(stationsState.stations!.map((e) => e.toMarker()).toList());
+      markers.addAll(stationsState.stations!
+          .map(
+            (station) => (station.toMarker()).copyWith(
+              onTapParam: () => showDialog(
+                context: context,
+                builder: (context) => StationDetails(station: station),
+              ),
+            ),
+          )
+          .toList());
     }
 
     return location.latLng != null
