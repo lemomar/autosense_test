@@ -4,6 +4,8 @@ import { Router } from "express";
 
 import db from "../firebase";
 import Station from '../models/station';
+import StationExistsError from '../models/exceptions/station_exists_error';
+import StationNotFoundError from '../models/exceptions/station_not_found_error';
 
 const router = Router();
 
@@ -16,41 +18,51 @@ router.get("/", async (req: any, res: any) => {
     }));
     res.json({ stations });
   } catch (error) {
-    console.error(error);
+    res.status(400).json({ error: "An error occured. Please try again." });
   }
 });
 
 router.post("/new-station", async (req: any, res: any) => {
-  const newStation: Station = req.body as Station;
-  const doc = await db.collection("stations").doc(req.body.id).get();
-  if (!doc.exists) {
+  try {
+    const newStation: Station = req.body as Station;
+    const doc = await db.collection("stations").doc(req.body.id).get();
+    if (doc.exists) throw new StationExistsError();
     const id = req.body.id;
     delete newStation.id;
     await db.collection("stations").doc(id).set({ ...newStation });
     res.redirect("/");
-  }
-  else {
-    res.status(400).json({ error: "There is already a station with that id." });
+  } catch (error) {
+    if (error instanceof StationExistsError) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+    res.status(400).json({ error: "An error occured. Please try again." });
   }
 });
 
 router.get("/delete-station", async (req: any, res: any) => {
-  const newStation: Station = req.body as Station;
+  try {
+    const newStation: Station = req.body as Station;
 
-  const doc = await db.collection("stations").doc(req.body.id).get();
-  if (doc.exists) {
+    const doc = await db.collection("stations").doc(req.body.id).get();
+    if (!doc.exists) throw new StationNotFoundError();
     await db.collection("stations").doc(newStation.id ?? "").delete();
     res.redirect("/");
-  } else {
-    res.status(400).json({ "error": "Station does not exist" });
+  } catch (error) {
+    if (error instanceof StationNotFoundError) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+    res.status(400).json({ error: "An error occured. Please try again." });
   }
 });
 
 router.post("/update-station", async (req: any, res: any) => {
-  const newStation: Station = req.body as Station;
-  const { id: string } = newStation;
-  const doc = await db.collection("stations").doc(req.body.id).get();
-  if (doc.exists) {
+  try {
+    const newStation: Station = req.body as Station;
+    const { id: string } = newStation;
+    const doc = await db.collection("stations").doc(req.body.id).get();
+    if (!doc.exists) throw new StationNotFoundError();
     const id = req.body.id;
     delete newStation.id;
     await db
@@ -58,8 +70,12 @@ router.post("/update-station", async (req: any, res: any) => {
       .doc(id)
       .update({ ...newStation });
     res.redirect("/");
-  } else {
-    res.status(400).json({ "error": "Station does not exist" });
+  } catch (error) {
+    if (error instanceof StationNotFoundError) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+    res.status(400).json({ error: "An error occured. Please try again." });
   }
 });
 
