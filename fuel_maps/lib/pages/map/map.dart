@@ -40,7 +40,7 @@ class MapScreen extends HookWidget {
             myLocationButtonEnabled: false,
             markers: markers,
             initialCameraPosition: CameraPosition(
-              zoom: 8,
+              zoom: 1,
               target: location.latLng!,
             ),
           )

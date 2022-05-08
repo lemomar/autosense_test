@@ -8,6 +8,7 @@ part 'station.g.dart';
 class Station {
   Station({
     required this.id,
+    this.creatorId,
     required this.name,
     required this.address,
     required this.city,
@@ -16,6 +17,7 @@ class Station {
     required this.pumps,
   });
   String id;
+  String? creatorId;
   String name;
   String address;
   String city;

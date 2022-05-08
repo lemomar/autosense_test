@@ -38,8 +38,6 @@ class LoginCubit extends Cubit<LoginState> {
           emit(state.copyWith(loginStatus: LoginStatus.wrongPassword));
           break;
       }
-      print(e.code);
-      print(e.message);
       emit(state.copyWith(loginStatus: LoginStatus.error));
     } catch (_) {
       emit(state.copyWith(loginStatus: LoginStatus.error));
@@ -67,8 +65,6 @@ class LoginCubit extends Cubit<LoginState> {
           emit(state.copyWith(loginStatus: LoginStatus.weakPassword));
           break;
       }
-      print(e.code);
-      print(e.message);
       emit(state.copyWith(loginStatus: LoginStatus.error));
     } catch (_) {
       emit(state.copyWith(loginStatus: LoginStatus.error));

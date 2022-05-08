@@ -8,6 +8,7 @@ part of 'station.dart';
 
 Station _$StationFromJson(Map<String, dynamic> json) => Station(
       id: json['id'] as String,
+      creatorId: json['creatorId'] as String?,
       name: json['name'] as String,
       address: json['address'] as String,
       city: json['city'] as String,
@@ -20,6 +21,7 @@ Station _$StationFromJson(Map<String, dynamic> json) => Station(
 
 Map<String, dynamic> _$StationToJson(Station instance) => <String, dynamic>{
       'id': instance.id,
+      'creatorId': instance.creatorId,
       'name': instance.name,
       'address': instance.address,
       'city': instance.city,
