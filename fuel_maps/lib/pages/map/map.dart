@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fuel_maps/models/station/station.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../cubits/cubits.dart';
@@ -21,6 +20,7 @@ class MapScreen extends HookWidget {
     }, const []);
 
     final location = context.watch<LocationCubit>().state;
+    final stationsState = context.watch<StationsCubit>().state;
 
     if (location.locationFetchFailed) {
       return const Center(
@@ -28,12 +28,17 @@ class MapScreen extends HookWidget {
       );
     }
 
+    Set<Marker> markers = <Marker>{};
+    if (stationsState.stations != null) {
+      markers.addAll(stationsState.stations!.map((e) => e.toMarker()).toList());
+    }
+
     return location.latLng != null
         ? GoogleMap(
             onMapCreated: ((c) => controller.value.complete(c)),
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
-            markers: sampleStationList.map((station) => station.toMarker()).toSet(),
+            markers: markers,
             initialCameraPosition: CameraPosition(
               zoom: 8,
               target: location.latLng!,

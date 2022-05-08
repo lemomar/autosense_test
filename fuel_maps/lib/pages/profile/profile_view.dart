@@ -12,7 +12,6 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppBloc>();
     final user = context.select((AppBloc bloc) => bloc.state.user);
     final String displayName = user.name ?? "";
     return Scaffold(

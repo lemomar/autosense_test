@@ -46,8 +46,18 @@ class FuelMaps extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: _authRepository,
-      child: BlocProvider(
-        create: (_) => AppBloc(authRepository: _authRepository),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => AppBloc(authRepository: _authRepository),
+          ),
+          BlocProvider(
+            create: (context) => LocationCubit(),
+          ),
+          BlocProvider(
+            create: (_) => StationsCubit(),
+          ),
+        ],
         child: ValueListenableBuilder(
           valueListenable: Hive.box<Settings>("settings").listenable(),
           builder: (context, Box<Settings> box, child) {
@@ -57,12 +67,9 @@ class FuelMaps extends StatelessWidget {
               theme: settings.lightTheme,
               darkTheme: settings.darkTheme,
               themeMode: settings.getThemeMode(),
-              home: BlocProvider(
-                create: (context) => LocationCubit(),
-                child: AppView(
-                  title: "Fuel Maps",
-                  settings: settings,
-                ),
+              home: AppView(
+                title: "Fuel Maps",
+                settings: settings,
               ),
             );
           },
