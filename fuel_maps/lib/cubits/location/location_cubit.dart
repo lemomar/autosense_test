@@ -16,9 +16,17 @@ class LocationCubit extends Cubit<LocationState> {
       }
       final LatLng newLatLng = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
           .then((value) => LatLng(value.latitude, value.longitude));
-      emit(LocationFetched(newLatLng: newLatLng));
+      emit(
+        state.copyWith(
+          currentCoordinates: newLatLng,
+        ),
+      );
     } catch (e) {
-      emit(const LocationError());
+      emit(state.copyWith(locationFetchFailed: true));
     }
+  }
+
+  updateNewMarkerCoordinates(LatLng newMarkerCoordinates) {
+    emit(state.copyWith(newMarkerCoordinates: newMarkerCoordinates));
   }
 }

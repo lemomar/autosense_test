@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fuel_maps/pages/map/station_modal.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../blocs/app/app_bloc.dart';
 import '../../cubits/cubits.dart';
 
 class MapScreen extends HookWidget {
@@ -20,6 +21,7 @@ class MapScreen extends HookWidget {
       return null;
     }, const []);
 
+    final app = context.watch<AppBloc>();
     final location = context.watch<LocationCubit>().state;
     final stationsState = context.watch<StationsCubit>().state;
 
@@ -42,20 +44,77 @@ class MapScreen extends HookWidget {
           )
           .toList());
     }
-
-    return location.latLng != null
-        ? GoogleMap(
-            onMapCreated: ((c) => controller.value.complete(c)),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            markers: markers,
-            initialCameraPosition: CameraPosition(
-              zoom: 1,
-              target: location.latLng!,
+    if (location.newMarkerCoordinates != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId("newMarkerId"),
+          draggable: true,
+          position: location.newMarkerCoordinates!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueBlue,
+          ),
+        ),
+      );
+    }
+    return Scaffold(
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (app.state.status == AppStatus.authenticated)
+            FloatingActionButton(
+              onPressed: () async {
+                final GoogleMapController newController = await controller.value.future;
+                LatLngBounds visibleRegion = await newController.getVisibleRegion();
+                LatLng centerLatLng = LatLng(
+                  (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
+                  (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
+                );
+                context.read<LocationCubit>().updateNewMarkerCoordinates(
+                      centerLatLng,
+                    );
+              },
+              tooltip: 'Add a station',
+              child: const Icon(
+                Icons.add_location_alt_outlined,
+              ),
             ),
-          )
-        : const Center(
-            child: Text("Loading"),
-          );
+          const SizedBox(
+            width: 12,
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              context.read<LocationCubit>().updateLocation();
+              if (controller.value.isCompleted) {
+                final newController = await controller.value.future;
+                final mapState = context.read<LocationCubit>().state;
+                newController.animateCamera(
+                  CameraUpdate.newLatLng(
+                    mapState.currentCoordinates!,
+                  ),
+                );
+              }
+            },
+            tooltip: 'Locate',
+            child: const Icon(Icons.location_pin),
+          ),
+        ],
+      ),
+      body: location.currentCoordinates != null
+          ? GoogleMap(
+              onMapCreated: ((c) => controller.value.complete(c)),
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              markers: markers,
+              initialCameraPosition: CameraPosition(
+                zoom: 1,
+                target: location.currentCoordinates!,
+              ),
+              onTap: (LatLng newMarkerCoordinates) =>
+                  context.read<LocationCubit>().updateNewMarkerCoordinates(newMarkerCoordinates),
+            )
+          : const Center(
+              child: Text("Loading"),
+            ),
+    );
   }
 }

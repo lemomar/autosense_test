@@ -1,12 +1,29 @@
 part of 'location_cubit.dart';
 
-abstract class LocationState extends Equatable {
-  const LocationState({this.locationFetchFailed = false, this.latLng});
-  final LatLng? latLng;
+class LocationState extends Equatable {
+  const LocationState({this.locationFetchFailed = false, this.currentCoordinates, this.newMarkerCoordinates});
+  final LatLng? currentCoordinates;
   final bool locationFetchFailed;
+  final LatLng? newMarkerCoordinates;
+
+  LocationState copyWith({
+    LatLng? currentCoordinates,
+    LatLng? newMarkerCoordinates,
+    bool? locationFetchFailed,
+  }) {
+    return LocationState(
+      currentCoordinates: currentCoordinates ?? this.currentCoordinates,
+      locationFetchFailed: locationFetchFailed ?? this.locationFetchFailed,
+      newMarkerCoordinates: newMarkerCoordinates ?? this.newMarkerCoordinates,
+    );
+  }
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [
+        currentCoordinates,
+        locationFetchFailed,
+        newMarkerCoordinates,
+      ];
 }
 
 class LocationInitial extends LocationState {
@@ -14,10 +31,14 @@ class LocationInitial extends LocationState {
 }
 
 class LocationFetched extends LocationState {
-  const LocationFetched({required this.newLatLng}) : super(latLng: newLatLng);
-  final LatLng newLatLng;
+  LocationFetched(LocationState newState)
+      : super(
+          currentCoordinates: newState.currentCoordinates,
+          locationFetchFailed: newState.locationFetchFailed,
+          newMarkerCoordinates: newState.newMarkerCoordinates,
+        );
 }
 
 class LocationError extends LocationState {
-  const LocationError() : super(locationFetchFailed: true, latLng: null);
+  const LocationError() : super(locationFetchFailed: true, currentCoordinates: null);
 }
