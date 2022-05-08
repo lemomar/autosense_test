@@ -22,8 +22,6 @@ router.get("/", async (req:any, res:any) => {
 
 router.post("/new-station", async (req:any, res:any) => {
   const newStation:Station = req.body as Station;
-  console.log(req.body);
-  console.log(req.body.id);
   await db.collection("stations").add({...newStation});
   res.redirect("/");
 });
