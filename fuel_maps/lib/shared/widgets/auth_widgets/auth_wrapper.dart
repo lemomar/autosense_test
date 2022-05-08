@@ -53,6 +53,7 @@ class AuthWrapper extends StatelessWidget {
           }
         },
         child: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           body: Padding(
             padding: const EdgeInsets.all(16),
             child: Center(child: child),

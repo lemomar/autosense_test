@@ -99,6 +99,8 @@ class FloatingActionButtons extends StatelessWidget {
         if (app.state.status == AppStatus.authenticated &&
             context.watch<LocationCubit>().state.newMarkerCoordinates != null)
           FloatingActionButton(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
             onPressed: () async {
               showDialog(
                 context: context,
@@ -115,6 +117,8 @@ class FloatingActionButtons extends StatelessWidget {
           width: 12,
         ),
         FloatingActionButton(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           onPressed: () async {
             context.read<LocationCubit>().updateLocation();
             if (controller.value.isCompleted) {
@@ -156,7 +160,7 @@ class MapWidget extends StatelessWidget {
       myLocationButtonEnabled: false,
       markers: markers,
       initialCameraPosition: CameraPosition(
-        zoom: 1,
+        zoom: 12,
         target: location.currentCoordinates!,
       ),
       onTap: (LatLng newMarkerCoordinates) =>

@@ -14,6 +14,10 @@ class LoginButton extends StatelessWidget {
         if (state.loginStatus == LoginStatus.submitted) return const CircularProgressIndicator();
         if (state.loginStatus == LoginStatus.success) return const Icon(Icons.check);
         return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).colorScheme.primary,
+            onPrimary: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => context.read<LoginCubit>().login(state.email, state.password),
           child: const Text("Login"),
         );

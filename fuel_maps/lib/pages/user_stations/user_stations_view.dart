@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fuel_maps/cubits/stations/stations_cubit.dart';
+import 'package:fuel_maps/blocs/app/app_bloc.dart';
+import 'package:fuel_maps/cubits/cubits.dart';
 import 'package:fuel_maps/shared/shared.dart';
 
 import '../map/station_edit_dialog.dart';
@@ -14,6 +15,16 @@ class UserStationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final stations = context.select((StationsCubit cubit) => cubit.state.stations);
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.read<AppBloc>().add(AppLogoutRequested()),
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(
+          Icons.logout,
+        ),
+        tooltip: "Log out",
+      ),
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

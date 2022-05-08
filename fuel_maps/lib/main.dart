@@ -99,6 +99,7 @@ class AppView extends HookWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       bottomNavigationBar: CustomNavigationBar(
         isDark: isDark,
         colorScheme: colorScheme,
