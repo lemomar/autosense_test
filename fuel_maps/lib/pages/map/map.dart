@@ -73,7 +73,7 @@ class MapScreen extends HookWidget {
       body: location.currentCoordinates != null
           ? MapWidget(controller: controller, markers: markers, location: location)
           : const Center(
-              child: Text("Loading"),
+              child: CircularProgressIndicator(),
             ),
     );
   }

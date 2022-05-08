@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none'
 
-version: 1.0.2
+version: 1.0.3
 
 environment:
   sdk: '>=2.16.2 <3.0.0'
@@ -12,8 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cached_network_image: ^3.2.0
-  cupertino_icons: ^1.0.2
   dio: ^4.0.6
   equatable: ^2.0.3
   flex_color_scheme: ^5.0.1
@@ -27,12 +25,10 @@ dependencies:
   hive_flutter: ^1.1.0
   hooks_riverpod: ^1.0.3
   json_annotation: ^4.5.0
-  like_button: ^2.0.4
   path_provider: ^2.0.9
   salomon_bottom_bar: ^3.3.0
   firebase_core: ^1.16.0
   firebase_auth: ^3.3.17
-  cloud_firestore: ^3.1.14
   flow_builder: ^0.0.6
 
 dev_dependencies:
