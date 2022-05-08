@@ -5,8 +5,6 @@ import admin from 'firebase-admin';
 
 dotenv.config();
 
-console.log(process.env.PROJECT_ID);
-
 initializeApp({
     credential: admin.credential.cert({
         projectId: (process.env.PROJECT_ID ?? "").replace(/\\n/g, '\n'),

@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "tsc --project ./",
-    "dev": "nodemon --watch src --exec 'ts-node src/index.ts'"
+    "dev": "nodemon --watch src/ --ext 'js, json, ts, proto' --exec 'ts-node src/index.ts'"
   },
   "keywords": [],
   "author": "",
