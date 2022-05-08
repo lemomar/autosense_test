@@ -28,5 +28,11 @@ router.post("/new-station", async (req:any, res:any) => {
   res.redirect("/");
 });
 
+router.get("/delete-station", async (req:any, res:any) => {
+  const newStation:Station = req.body as Station;
+  await db.collection("stations").doc(newStation.id).delete();
+  res.redirect("/");
+});
+
 
 export default router;
