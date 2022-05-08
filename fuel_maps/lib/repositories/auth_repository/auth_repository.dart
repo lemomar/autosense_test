@@ -10,29 +10,27 @@ class AuthRepository {
   var currentUser = User.empty;
 
   Stream<User> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
+    return _firebaseAuth.userChanges().map((firebaseUser) {
       final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
       currentUser = user;
       return user;
     });
   }
 
-  Future<void> register({required String email, required String password}) async {
-    try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (_) {}
+  Future<void> register({required String email, required String password, required String displayName}) async {
+    await _firebaseAuth
+        .createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        )
+        .then((_) => _firebaseAuth.currentUser?.updateDisplayName(displayName));
   }
 
   Future<void> login({required String email, required String password}) async {
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (_) {}
+    await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 
   Future<void> logout() async {

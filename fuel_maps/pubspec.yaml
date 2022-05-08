@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none'
 
-version: 0.3.4
+version: 0.4.0
 
 environment:
   sdk: '>=2.16.2 <3.0.0'
@@ -33,6 +33,7 @@ dependencies:
   firebase_core: ^1.16.0
   firebase_auth: ^3.3.17
   cloud_firestore: ^3.1.14
+  flow_builder: ^0.0.6
 
 dev_dependencies:
   flutter_test:

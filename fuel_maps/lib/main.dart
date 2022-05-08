@@ -47,32 +47,33 @@ class FuelMaps extends StatelessWidget {
     return RepositoryProvider.value(
       value: _authRepository,
       child: BlocProvider(
-          create: (_) => AppBloc(authRepository: _authRepository),
-          child: ValueListenableBuilder(
-            valueListenable: Hive.box<Settings>("settings").listenable(),
-            builder: (context, Box<Settings> box, child) {
-              final Settings settings = box.get("settings") ?? Settings();
-              return MaterialApp(
-                title: 'Fuel Maps',
-                theme: settings.lightTheme,
-                darkTheme: settings.darkTheme,
-                themeMode: settings.getThemeMode(),
-                home: BlocProvider(
-                  create: (context) => LocationCubit(),
-                  child: MyHomePage(
-                    title: "Fuel Maps",
-                    settings: settings,
-                  ),
+        create: (_) => AppBloc(authRepository: _authRepository),
+        child: ValueListenableBuilder(
+          valueListenable: Hive.box<Settings>("settings").listenable(),
+          builder: (context, Box<Settings> box, child) {
+            final Settings settings = box.get("settings") ?? Settings();
+            return MaterialApp(
+              title: 'Fuel Maps',
+              theme: settings.lightTheme,
+              darkTheme: settings.darkTheme,
+              themeMode: settings.getThemeMode(),
+              home: BlocProvider(
+                create: (context) => LocationCubit(),
+                child: AppView(
+                  title: "Fuel Maps",
+                  settings: settings,
                 ),
-              );
-            },
-          )),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
 
-class MyHomePage extends HookWidget {
-  MyHomePage({
+class AppView extends HookWidget {
+  AppView({
     Key? key,
     required this.title,
     required this.settings,
@@ -106,36 +107,82 @@ class MyHomePage extends HookWidget {
           child: IndexedStack(
             children: [
               MapScreen(controller: mapController),
-              CounterOnly(
-                counter: counter,
+              SwitchOnly(
+                // counter: counter,
+                settings: settings,
                 navigatorKey: favoriteGlobalKey,
               ),
-              SwitchOnly(
-                settings: settings,
-                navigatorKey: profileGlobalKey,
-              ),
+              const Profile(),
             ],
             index: bottomBarState.value,
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          counter.value++;
-          context.read<LocationCubit>().updateLocation();
-          if (mapController.value.isCompleted) {
-            final controller = await mapController.value.future;
-            final mapState = context.read<LocationCubit>().state;
-            controller.moveCamera(
-              CameraUpdate.newLatLng(
-                mapState.latLng!,
-              ),
-            );
-          }
-        },
-        tooltip: 'Locate',
-        child: const Icon(Icons.location_pin),
+      floatingActionButton: FloatingActionButtons(
+        counter: counter,
+        mapController: mapController,
       ),
+    );
+  }
+}
+
+class FloatingActionButtons extends StatelessWidget {
+  const FloatingActionButtons({
+    Key? key,
+    required this.counter,
+    required this.mapController,
+  }) : super(key: key);
+
+  final ValueNotifier<int> counter;
+  final ValueNotifier<Completer<GoogleMapController>> mapController;
+
+  @override
+  Widget build(BuildContext context) {
+    final app = context.watch<AppBloc>().state;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (app.status == AppStatus.authenticated)
+          FloatingActionButton(
+            onPressed: () async {
+              counter.value++;
+              context.read<LocationCubit>().updateLocation();
+              if (mapController.value.isCompleted) {
+                final controller = await mapController.value.future;
+                final mapState = context.read<LocationCubit>().state;
+                controller.moveCamera(
+                  CameraUpdate.newLatLng(
+                    mapState.latLng!,
+                  ),
+                );
+              }
+            },
+            tooltip: 'Add a station',
+            child: const Icon(
+              Icons.add_location_alt_outlined,
+            ),
+          ),
+        const SizedBox(
+          width: 12,
+        ),
+        FloatingActionButton(
+          onPressed: () async {
+            counter.value++;
+            context.read<LocationCubit>().updateLocation();
+            if (mapController.value.isCompleted) {
+              final controller = await mapController.value.future;
+              final mapState = context.read<LocationCubit>().state;
+              controller.moveCamera(
+                CameraUpdate.newLatLng(
+                  mapState.latLng!,
+                ),
+              );
+            }
+          },
+          tooltip: 'Locate',
+          child: const Icon(Icons.location_pin),
+        ),
+      ],
     );
   }
 }
