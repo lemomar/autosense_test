@@ -26,7 +26,11 @@ class LocationCubit extends Cubit<LocationState> {
     }
   }
 
-  updateNewMarkerCoordinates(LatLng newMarkerCoordinates) {
+  void updateNewMarkerCoordinates(LatLng? newMarkerCoordinates) {
     emit(state.copyWith(newMarkerCoordinates: newMarkerCoordinates));
+  }
+
+  void resetNewMarkerCoordinates() {
+    updateNewMarkerCoordinates(null);
   }
 }

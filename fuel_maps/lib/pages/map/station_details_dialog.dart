@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fuel_maps/pages/map/station_edit_dialog.dart';
 import 'package:fuel_maps/shared/shared.dart';
 
 import '../../models/models.dart';
 
-class StationDetails extends StatelessWidget {
-  const StationDetails({Key? key, required this.station}) : super(key: key);
+class StationDetailsDialog extends StatelessWidget {
+  const StationDetailsDialog({Key? key, required this.station}) : super(key: key);
 
   final Station station;
 
@@ -22,7 +23,16 @@ class StationDetails extends StatelessWidget {
                 station.name,
                 actions: [
                   IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit))
+                  IconButton(
+                      onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => StationEditDialog(
+                              longitude: station.longitude,
+                              latitude: station.latitude,
+                              station: station,
+                            ),
+                          ),
+                      icon: const Icon(Icons.edit))
                 ],
               ),
               DialogSubtitle("Address: ${station.address}, ${station.city}"),

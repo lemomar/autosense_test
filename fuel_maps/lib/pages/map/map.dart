@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fuel_maps/pages/map/new_station_modal.dart';
-import 'package:fuel_maps/pages/map/station_modal.dart';
+import 'package:fuel_maps/pages/map/station_edit_dialog.dart';
+import 'package:fuel_maps/pages/map/station_details_dialog.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../blocs/app/app_bloc.dart';
@@ -25,6 +25,7 @@ class MapScreen extends HookWidget {
     final app = context.watch<AppBloc>();
     final location = context.watch<LocationCubit>().state;
     final stationsState = context.watch<StationsCubit>().state;
+    final ValueNotifier<Marker?> newStationMarker = useState(null);
 
     if (location.locationFetchFailed) {
       return const Center(
@@ -39,55 +40,49 @@ class MapScreen extends HookWidget {
             (station) => (station.toMarker()).copyWith(
               onTapParam: () => showDialog(
                 context: context,
-                builder: (context) => StationDetails(station: station),
+                builder: (context) => StationDetailsDialog(station: station),
               ),
             ),
           )
           .toList());
     }
-    if (location.newMarkerCoordinates != null) {
-      markers.add(
-        Marker(
-          markerId: const MarkerId("newMarkerId"),
-          draggable: true,
-          position: location.newMarkerCoordinates!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueBlue,
+
+    useEffect(() {
+      if (location.newMarkerCoordinates != null) {
+        markers.add(
+          Marker(
+            markerId: const MarkerId("newMarkerId"),
+            draggable: true,
+            position: location.newMarkerCoordinates!,
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueBlue,
+            ),
           ),
-        ),
-      );
-    }
+        );
+      } else {
+        markers.removeWhere((element) => element.markerId.value == "newMarkerId");
+      }
+      return null;
+    }, [location.newMarkerCoordinates]);
+
     return Scaffold(
       floatingActionButton: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (app.state.status == AppStatus.authenticated)
+          if (app.state.status == AppStatus.authenticated &&
+              context.watch<LocationCubit>().state.newMarkerCoordinates != null)
             FloatingActionButton(
               onPressed: () async {
-                if (location.newMarkerCoordinates == null) {
-                  final GoogleMapController newController = await controller.value.future;
-                  LatLngBounds visibleRegion = await newController.getVisibleRegion();
-                  LatLng centerLatLng = LatLng(
-                    (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
-                    (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
-                  );
-                  context.read<LocationCubit>().updateNewMarkerCoordinates(
-                        centerLatLng,
-                      );
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (_) => NewStationModal(
-                      latitude: location.newMarkerCoordinates!.latitude,
-                      longitude: location.newMarkerCoordinates!.longitude,
-                    ),
-                  );
-                }
+                showDialog(
+                  context: context,
+                  builder: (_) => StationEditDialog(
+                    latitude: location.newMarkerCoordinates!.latitude,
+                    longitude: location.newMarkerCoordinates!.longitude,
+                  ),
+                ).then((_) => context.read<LocationCubit>().resetNewMarkerCoordinates());
               },
               tooltip: 'Add a station',
-              child: location.newMarkerCoordinates == null
-                  ? const Icon(Icons.add_location_alt_outlined)
-                  : const Icon(Icons.check),
+              child: const Icon(Icons.add_location_alt_outlined),
             ),
           const SizedBox(
             width: 12,
@@ -98,11 +93,12 @@ class MapScreen extends HookWidget {
               if (controller.value.isCompleted) {
                 final newController = await controller.value.future;
                 final mapState = context.read<LocationCubit>().state;
-                newController.animateCamera(
+                await newController.animateCamera(
                   CameraUpdate.newLatLng(
                     mapState.currentCoordinates!,
                   ),
                 );
+                context.read<StationsCubit>().fetchStations();
               }
             },
             tooltip: 'Locate',

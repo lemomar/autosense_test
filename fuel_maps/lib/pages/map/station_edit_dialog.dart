@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fuel_maps/blocs/app/app_bloc.dart';
 
+import '../../cubits/cubits.dart';
 import '../../models/models.dart';
 import '../../shared/shared.dart';
 
-class NewStationModal extends HookWidget {
-  NewStationModal({
+class StationEditDialog extends HookWidget {
+  StationEditDialog({
     Key? key,
     Station? station,
     required this.longitude,
@@ -60,8 +63,11 @@ class NewStationModal extends HookWidget {
                     ),
                     IconButton(
                       onPressed: () {
+                        final stationsState = context.read<StationsCubit>();
+                        final appState = context.read<AppBloc>();
                         final Station newStation = Station(
                           id: stationIdController.text,
+                          creatorId: appState.state.user.id,
                           name: stationNameController.text,
                           pumps: pumpListener.value,
                           city: "",
@@ -69,7 +75,13 @@ class NewStationModal extends HookWidget {
                           longitude: longitude,
                           latitude: latitude,
                         );
-                        print(newStation.toJson());
+                        if (station == Station.empty) {
+                          stationsState.createStation(newStation);
+                          Navigator.pop(context);
+                          return;
+                        }
+                        stationsState.updateStation(newStation);
+                        Navigator.pop(context);
                       },
                       icon: const Icon(Icons.check),
                     ),
@@ -118,7 +130,12 @@ class NewStationModal extends HookWidget {
                             "${pump.price} CHF",
                             overflow: TextOverflow.ellipsis,
                           ),
-                          onTap: () => showPumpEditDialog(context, pump, updatePump),
+                          onTap: () => showPumpEditDialog(
+                            context,
+                            pump,
+                            updatePump,
+                            index: pumpListener.value.indexOf(pump),
+                          ),
                         ),
                       ),
                       Center(
@@ -142,10 +159,12 @@ class NewStationModal extends HookWidget {
     );
   }
 
-  Future<dynamic> showPumpEditDialog(BuildContext context, Pump pump, void Function(int? index, Pump pump) updatePump) {
+  Future<dynamic> showPumpEditDialog(BuildContext context, Pump pump, void Function(int? index, Pump pump) updatePump,
+      {int? index}) {
     return showDialog(
         context: context,
         builder: (context) => PumpEdit(
+              index: index,
               pump: pump,
               onSave: updatePump,
             ));
@@ -163,7 +182,7 @@ class PumpEdit extends HookWidget {
     final pumpIdController = useTextEditingController(text: pump.id.toString());
     final pumpPriceController = useTextEditingController(text: pump.price.toString());
     final pumpFuelTypeController = useTextEditingController(text: pump.fuelType);
-    final availabilityListener = useState(true);
+    final availabilityListener = useState(pump.available);
 
     useEffect(() {
       pumpIdController.addListener(() {});
