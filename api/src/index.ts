@@ -23,8 +23,9 @@
 import app from "./app";
 
 async function main() {
-  app.listen(3000);
-  console.log("Server on port", 3000);
+  const port = process.env.PORT || 5000;
+  app.listen(port);
+  console.log("Server on port", port);
 }
 
 main();

@@ -5,8 +5,8 @@ import 'package:fuel_maps/routes.dart';
 
 import '../../blocs/app/app_bloc.dart';
 
-class Profile extends StatelessWidget {
-  const Profile({Key? key}) : super(key: key);
+class UserStations extends StatelessWidget {
+  const UserStations({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

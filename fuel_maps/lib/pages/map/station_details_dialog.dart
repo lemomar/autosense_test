@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fuel_maps/cubits/stations/stations_cubit.dart';
 import 'package:fuel_maps/pages/map/station_edit_dialog.dart';
 import 'package:fuel_maps/shared/shared.dart';
 
@@ -22,7 +24,15 @@ class StationDetailsDialog extends StatelessWidget {
               DialogTitle(
                 station.name,
                 actions: [
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+                  IconButton(
+                    onPressed: () {
+                      context.read<StationsCubit>().deleteStation(station);
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                    ),
+                  ),
                   IconButton(
                       onPressed: () => showDialog(
                             context: context,

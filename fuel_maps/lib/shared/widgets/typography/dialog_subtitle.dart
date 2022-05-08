@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class DialogSubtitle extends StatelessWidget {
   const DialogSubtitle(
     this.text, {
     Key? key,
+    this.padding,
   }) : super(key: key);
 
   final String text;
+  final double? padding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8.0,
+      padding: EdgeInsets.symmetric(
+        horizontal: padding ?? 8.0,
       ),
       child: Text(
         text,

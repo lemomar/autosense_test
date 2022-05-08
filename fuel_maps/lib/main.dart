@@ -89,19 +89,15 @@ class AppView extends HookWidget {
   final String title;
   final Settings settings;
 
-  final GlobalKey mapGlobalKey = GlobalKey<NavigatorState>();
-  final GlobalKey favoriteGlobalKey = GlobalKey<NavigatorState>();
   final GlobalKey profileGlobalKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     final ValueNotifier<Completer<GoogleMapController>> mapController = useState(Completer());
-    final counter = useState(0);
     final bottomBarState = useState(0);
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    // final Color bottomBarUnselectedColor = isDark ? colorScheme.onSecondary : colorScheme.onPrimary;
-    // final Color bottomBarActiveColor = isDark ? colorScheme.secondary : colorScheme.primary;
+
     return Scaffold(
       bottomNavigationBar: CustomNavigationBar(
         isDark: isDark,
@@ -114,12 +110,7 @@ class AppView extends HookWidget {
           child: IndexedStack(
             children: [
               MapScreen(controller: mapController),
-              SwitchOnly(
-                // counter: counter,
-                settings: settings,
-                navigatorKey: favoriteGlobalKey,
-              ),
-              const Profile(),
+              const UserStations(),
             ],
             index: bottomBarState.value,
           ),
@@ -158,7 +149,7 @@ class CounterOnly extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const Profile(),
+                  builder: (context) => const UserStations(),
                 ),
               ),
               child: const Text("Navigate"),
@@ -199,7 +190,7 @@ class SwitchOnly extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const Profile(),
+                  builder: (context) => const UserStations(),
                 ),
               ),
               child: const Text("Navigate"),
@@ -245,7 +236,7 @@ class CounterAndSwitch extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const Profile(),
+                  builder: (context) => const UserStations(),
                 ),
               ),
               child: const Text("Navigate"),
@@ -288,12 +279,8 @@ class CustomNavigationBar extends StatelessWidget {
             icon: const Icon(Icons.location_on_rounded),
           ),
           SalomonBottomBarItem(
-            title: const Text('Favorite'),
-            icon: const Icon(Icons.favorite_outline_rounded),
-          ),
-          SalomonBottomBarItem(
-            title: const Text('Profile'),
-            icon: const Icon(Icons.person_rounded),
+            title: const Text('Your stations'),
+            icon: const Icon(Icons.local_gas_station),
           ),
         ],
       ),

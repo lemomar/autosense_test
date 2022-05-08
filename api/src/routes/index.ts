@@ -45,7 +45,7 @@ router.post("/new-station", async (req: any, res: any) => {
   }
 });
 
-router.get("/delete-station", async (req: any, res: any) => {
+router.delete("/delete-station", async (req: any, res: any) => {
   try {
     const newStation: Station = req.body as Station;
 

@@ -16,15 +16,13 @@ class StationsCubit extends Cubit<StationsState> {
       final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(response.data["stations"]);
       final List<Station> stations = data.map(Station.fromJson).toList();
       emit(state.copyWith(stations: stations));
-    } catch (e) {
-      print(e);
-    }
+    } catch (_) {}
   }
 
   void fetchStations() async {
     try {
       emit(state.copyWith(status: StationsFetchStatus.loading));
-      final Response response = await Dio().get("http://100.104.208.24:3000/");
+      final Response response = await Dio().get("https://autosense-test-api.herokuapp.com/");
       _updateStations(response);
     } catch (_) {
       emit(const StationsError());
@@ -35,7 +33,7 @@ class StationsCubit extends Cubit<StationsState> {
     try {
       emit(state.copyWith(status: StationsFetchStatus.loading));
       final Response response = await Dio().post(
-        "http://100.104.208.24:3000/new-station",
+        "https://autosense-test-api.herokuapp.com/new-station",
         data: {
           ...newStation.toJson(),
         },
@@ -43,7 +41,6 @@ class StationsCubit extends Cubit<StationsState> {
       );
       _updateStations(response);
     } catch (e) {
-      print(e);
       fetchStations();
     }
   }
@@ -52,9 +49,25 @@ class StationsCubit extends Cubit<StationsState> {
     try {
       emit(state.copyWith(status: StationsFetchStatus.loading));
       final Response response = await Dio().post(
-        "http://100.104.208.24:3000/update-station",
+        "https://autosense-test-api.herokuapp.com/update-station",
         data: {
           ...newStation.toJson(),
+        },
+        options: Options(headers: {"Accept": "application/json"}),
+      );
+      _updateStations(response);
+    } catch (_) {
+      fetchStations();
+    }
+  }
+
+  void deleteStation(Station station) async {
+    try {
+      emit(state.copyWith(status: StationsFetchStatus.loading));
+      final Response response = await Dio().delete(
+        "https://autosense-test-api.herokuapp.com/delete-station",
+        data: {
+          ...station.toJson(),
         },
         options: Options(headers: {"Accept": "application/json"}),
       );

@@ -50,42 +50,16 @@ class StationEditDialog extends HookWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: ListView(
-              // mainAxisSize: MainAxisSize.min,
-              // crossAxisAlignment: CrossAxisAlignment.start,
               shrinkWrap: true,
               children: [
                 DialogTitle(
-                  "New Station",
-                  actions: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        final stationsState = context.read<StationsCubit>();
-                        final appState = context.read<AppBloc>();
-                        final Station newStation = Station(
-                          id: stationIdController.text,
-                          creatorId: appState.state.user.id,
-                          name: stationNameController.text,
-                          pumps: pumpListener.value,
-                          city: "",
-                          address: "",
-                          longitude: longitude,
-                          latitude: latitude,
-                        );
-                        if (station == Station.empty) {
-                          stationsState.createStation(newStation);
-                          Navigator.pop(context);
-                          return;
-                        }
-                        stationsState.updateStation(newStation);
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.check),
-                    ),
-                  ],
+                  station == Station.empty ? "New Station" : "Edit Station",
+                  actions: titleTrailingIcons(
+                    context,
+                    stationIdController,
+                    stationNameController,
+                    pumpListener,
+                  ),
                 ),
                 const DialogSubtitle("The station will be created at the location where you placed the marker."),
                 Padding(
@@ -157,6 +131,43 @@ class StationEditDialog extends HookWidget {
         ),
       ),
     );
+  }
+
+  List<Widget> titleTrailingIcons(BuildContext context, TextEditingController stationIdController,
+      TextEditingController stationNameController, ValueNotifier<List<Pump>> pumpListener) {
+    return [
+      IconButton(
+        onPressed: () {
+          context.read<StationsCubit>().deleteStation(station);
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.delete),
+      ),
+      IconButton(
+        onPressed: () {
+          final stationsState = context.read<StationsCubit>();
+          final appState = context.read<AppBloc>();
+          final Station newStation = Station(
+            id: stationIdController.text,
+            creatorId: appState.state.user.id,
+            name: stationNameController.text,
+            pumps: pumpListener.value,
+            city: station.city,
+            address: station.address,
+            longitude: longitude,
+            latitude: latitude,
+          );
+          if (station == Station.empty) {
+            stationsState.createStation(newStation);
+            Navigator.pop(context);
+            return;
+          }
+          stationsState.updateStation(newStation);
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.check),
+      ),
+    ];
   }
 
   Future<dynamic> showPumpEditDialog(BuildContext context, Pump pump, void Function(int? index, Pump pump) updatePump,
