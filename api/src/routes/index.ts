@@ -1,0 +1,32 @@
+import { DocumentSnapshot } from 'firebase-admin/firestore';
+import { Router } from "express";
+
+
+import db from "../firebase";
+import Station from '../models/station';
+
+const router = Router();
+
+router.get("/", async (req:any, res:any) => {
+  try {
+    const querySnapshot = await db.collection("stations").get();
+    const stations = querySnapshot.docs.map((doc: DocumentSnapshot) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    res.json({ stations });
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+router.post("/new-station", async (req:any, res:any) => {
+  const newStation:Station = req.body as Station;
+  console.log(req.body);
+  console.log(req.body.id);
+  await db.collection("stations").add({...newStation});
+  res.redirect("/");
+});
+
+
+export default router;
