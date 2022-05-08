@@ -14,8 +14,6 @@ class RegisterButton extends StatelessWidget {
           (current.loginStatus == LoginStatus.submitted || previous.loginStatus == LoginStatus.submitted),
       builder: (context, state) {
         final state = context.read<LoginCubit>().state;
-        if (state.loginStatus == LoginStatus.submitted) return const CircularProgressIndicator();
-        if (state.loginStatus == LoginStatus.success) return const Icon(Icons.check);
         return TextButton(
           onPressed: () => context.read<LoginCubit>().register(state.email, state.password),
           child: const Text("Register"),

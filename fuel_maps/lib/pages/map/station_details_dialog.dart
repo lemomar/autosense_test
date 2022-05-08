@@ -4,6 +4,7 @@ import 'package:fuel_maps/cubits/stations/stations_cubit.dart';
 import 'package:fuel_maps/pages/map/station_edit_dialog.dart';
 import 'package:fuel_maps/shared/shared.dart';
 
+import '../../blocs/app/app_bloc.dart';
 import '../../models/models.dart';
 
 class StationDetailsDialog extends StatelessWidget {
@@ -25,23 +26,28 @@ class StationDetailsDialog extends StatelessWidget {
                 station.name,
                 actions: [
                   IconButton(
-                    onPressed: () {
-                      context.read<StationsCubit>().deleteStation(station);
-                      Navigator.pop(context);
-                    },
+                    onPressed: context.read<AppBloc>().state.status == AppStatus.authenticated
+                        ? () {
+                            context.read<StationsCubit>().deleteStation(station);
+                            Navigator.pop(context);
+                          }
+                        : null,
                     icon: const Icon(
                       Icons.delete,
                     ),
                   ),
                   IconButton(
-                      onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) => StationEditDialog(
-                              longitude: station.longitude,
-                              latitude: station.latitude,
-                              station: station,
-                            ),
-                          ),
+                      onPressed: context.read<AppBloc>().state.status == AppStatus.authenticated
+                          ? () => showDialog(
+                                context: context,
+                                builder: (context) => StationEditDialog(
+                                  longitude: station.longitude,
+                                  latitude: station.latitude,
+                                  station: station,
+                                ),
+                              )
+                          : null,
+                      disabledColor: Theme.of(context).colorScheme.primary.withOpacity(.3),
                       icon: const Icon(Icons.edit))
                 ],
               ),

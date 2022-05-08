@@ -11,8 +11,6 @@ class LoginButton extends StatelessWidget {
     return BlocBuilder<LoginCubit, LoginState>(
       builder: (context, state) {
         final state = context.read<LoginCubit>().state;
-        if (state.loginStatus == LoginStatus.submitted) return const CircularProgressIndicator();
-        if (state.loginStatus == LoginStatus.success) return const Icon(Icons.check);
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
             primary: Theme.of(context).colorScheme.primary,
