@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fuel_maps/shared/shared.dart';
 
 import '../../models/models.dart';
 
@@ -64,57 +65,6 @@ class PumpListView extends StatelessWidget {
       shrinkWrap: true,
       itemBuilder: (context, index) => PumpListTile(pump: station.pumps[index]),
       itemCount: station.pumps.length,
-    );
-  }
-}
-
-class DialogSubtitle extends StatelessWidget {
-  const DialogSubtitle(
-    this.text, {
-    Key? key,
-  }) : super(key: key);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8.0,
-      ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.subtitle2,
-      ),
-    );
-  }
-}
-
-class DialogTitle extends StatelessWidget {
-  const DialogTitle(
-    this.text, {
-    Key? key,
-    this.actions,
-  }) : super(key: key);
-
-  final String text;
-  final List<Widget>? actions;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            text,
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const Spacer(),
-          if (actions != null) ...actions!,
-        ],
-      ),
     );
   }
 }

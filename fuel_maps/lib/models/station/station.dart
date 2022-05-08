@@ -6,7 +6,7 @@ part 'station.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Station {
-  Station({
+  const Station({
     required this.id,
     this.creatorId,
     required this.name,
@@ -16,14 +16,18 @@ class Station {
     required this.longitude,
     required this.pumps,
   });
-  String id;
-  String? creatorId;
-  String name;
-  String address;
-  String city;
-  double latitude;
-  double longitude;
-  List<Pump> pumps;
+  final String id;
+  final String? creatorId;
+  final String name;
+  final String address;
+  final String city;
+  final double latitude;
+  final double longitude;
+  final List<Pump> pumps;
+
+  static Station get empty =>
+      const Station(id: "", name: "", address: "", city: "", latitude: 0, longitude: 0, pumps: []);
+
   factory Station.fromJson(Map<String, dynamic> json) => _$StationFromJson(json);
 
   Map<String, dynamic> toJson() => _$StationToJson(this);

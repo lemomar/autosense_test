@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fuel_maps/pages/map/new_station_modal.dart';
 import 'package:fuel_maps/pages/map/station_modal.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -63,20 +64,30 @@ class MapScreen extends HookWidget {
           if (app.state.status == AppStatus.authenticated)
             FloatingActionButton(
               onPressed: () async {
-                final GoogleMapController newController = await controller.value.future;
-                LatLngBounds visibleRegion = await newController.getVisibleRegion();
-                LatLng centerLatLng = LatLng(
-                  (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
-                  (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
-                );
-                context.read<LocationCubit>().updateNewMarkerCoordinates(
-                      centerLatLng,
-                    );
+                if (location.newMarkerCoordinates == null) {
+                  final GoogleMapController newController = await controller.value.future;
+                  LatLngBounds visibleRegion = await newController.getVisibleRegion();
+                  LatLng centerLatLng = LatLng(
+                    (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
+                    (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
+                  );
+                  context.read<LocationCubit>().updateNewMarkerCoordinates(
+                        centerLatLng,
+                      );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (_) => NewStationModal(
+                      latitude: location.newMarkerCoordinates!.latitude,
+                      longitude: location.newMarkerCoordinates!.longitude,
+                    ),
+                  );
+                }
               },
               tooltip: 'Add a station',
-              child: const Icon(
-                Icons.add_location_alt_outlined,
-              ),
+              child: location.newMarkerCoordinates == null
+                  ? const Icon(Icons.add_location_alt_outlined)
+                  : const Icon(Icons.check),
             ),
           const SizedBox(
             width: 12,

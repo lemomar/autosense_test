@@ -17,6 +17,8 @@ class Pump {
   final double price;
   final bool available;
 
+  static Pump get empty => const Pump(id: 0, fuelType: "", price: 0, available: true);
+
   factory Pump.fromJson(Map<String, dynamic> json) => _$PumpFromJson(json);
 
   Map<String, dynamic> toJson() => _$PumpToJson(this);
