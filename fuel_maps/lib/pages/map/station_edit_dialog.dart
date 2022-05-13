@@ -173,12 +173,13 @@ class StationEditDialog extends HookWidget {
   Future<dynamic> showPumpEditDialog(BuildContext context, Pump pump, void Function(int? index, Pump pump) updatePump,
       {int? index}) {
     return showDialog(
-        context: context,
-        builder: (context) => PumpEdit(
-              index: index,
-              pump: pump,
-              onSave: updatePump,
-            ));
+      context: context,
+      builder: (context) => PumpEdit(
+        index: index,
+        pump: pump,
+        onSave: updatePump,
+      ),
+    );
   }
 }
 

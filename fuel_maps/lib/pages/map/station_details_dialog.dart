@@ -108,7 +108,7 @@ class PumpListTile extends StatelessWidget {
         pump.fuelType,
       ),
       subtitle: Text(
-        pump.toString() + "CHF",
+        "Price: ${pump.price} CHF",
       ),
     );
   }

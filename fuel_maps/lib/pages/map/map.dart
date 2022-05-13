@@ -159,6 +159,7 @@ class MapWidget extends StatelessWidget {
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       markers: markers,
+      zoomControlsEnabled: false,
       initialCameraPosition: CameraPosition(
         zoom: 12,
         target: location.currentCoordinates!,

@@ -66,7 +66,7 @@ class FuelMaps extends StatelessWidget {
               title: 'Fuel Maps',
               theme: settings.lightTheme,
               darkTheme: settings.darkTheme,
-              themeMode: settings.getThemeMode(),
+              themeMode: ThemeMode.light,
               home: AppView(
                 title: "Fuel Maps",
                 settings: settings,
